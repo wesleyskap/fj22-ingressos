@@ -18,10 +18,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import br.com.caelum.ingresso.dao.FilmeDao;
 import br.com.caelum.ingresso.dao.SessaoDao;
-import br.com.caelum.ingresso.model.Detalhes;
+import br.com.caelum.ingresso.model.DetalhesDoFilme;
 import br.com.caelum.ingresso.model.Filme;
 import br.com.caelum.ingresso.model.Sessao;
-import br.com.caelum.ingresso.rest.WebClientAPI;
+import br.com.caelum.ingresso.rest.ImdbClient;
 
 /**
  * Created by nando on 03/03/17.
@@ -32,10 +32,12 @@ public class FilmeController {
 
     @Autowired
     private FilmeDao filmeDao;
+    
     @Autowired
     private SessaoDao sessaoDao;
+    
     @Autowired
-	private	WebClientAPI client;
+    private ImdbClient imdbClient;
 
 
     @GetMapping({"/admin/filme", "/admin/filme/{id}"})
@@ -86,25 +88,25 @@ public class FilmeController {
     public void delete(@PathVariable("id") Integer id){
         filmeDao.delete(id);
     }
+    
     @GetMapping("/filme/em-cartaz")
-	public	ModelAndView	emCartaz(){
-		ModelAndView modelAndView =	new	ModelAndView("filme/em-cartaz");
-		modelAndView.addObject("filmes", filmeDao.findAll());
-		return	modelAndView;
-	}
+    public ModelAndView emCartaz(){
+    	ModelAndView modelAndView = new ModelAndView("filme/em-cartaz");
+    	modelAndView.addObject("filmes", filmeDao.findAll());
+    	return modelAndView;
+    }
+    
     @GetMapping("/filme/{id}/detalhe")
-    public ModelAndView detalhes (@PathVariable("id")Integer id){
-    	ModelAndView modelAndView =	new	ModelAndView("/filme/detalhe");
-		
-    	Filme filme	= filmeDao.findOne(id);
-		List<Sessao> sessoes = sessaoDao.buscaSessoesDoFilme(filme);
-		
-		Optional<Detalhes> detalhesDoFilme = client.request(filme);
-		
-		modelAndView.addObject("sessoes", sessoes);
-		modelAndView.addObject("detalhes", detalhesDoFilme.orElse(new Detalhes()));
-		
-		return	modelAndView;
+    public ModelAndView detalhes(@PathVariable("id") Integer id){
+    	ModelAndView modelAndView = new ModelAndView("/filme/detalhe");
+    	Filme filme = filmeDao.findOne(id);
+    	List<Sessao> sessoes = sessaoDao.buscaSessoesDoFilme(filme);
+    	
+    	Optional<DetalhesDoFilme> detalhesDoFilme = imdbClient.request(filme, DetalhesDoFilme.class);
+    	modelAndView.addObject("sessoes",sessoes);
+    	modelAndView.addObject("detalhes", detalhesDoFilme.orElse(new DetalhesDoFilme()));
+    	
+    	return modelAndView;
     }
 
 }

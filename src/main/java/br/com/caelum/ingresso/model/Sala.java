@@ -28,11 +28,11 @@ public class Sala {
 
     @NotBlank
     private String nome;
+    
+    private BigDecimal preco;
 
     @OneToMany(fetch = FetchType.EAGER)
     private List<Lugar> lugares = new ArrayList<>();
-    
-    private BigDecimal preco;
 
     /**
      * @deprecated hibernate only
@@ -61,16 +61,9 @@ public class Sala {
     public void setNome(String nome) {
         this.nome = nome;
     }
-    
-    public BigDecimal getPreco() {
-		return preco;
-	}
 
-	public void setPreco(BigDecimal preco) {
-		this.preco = preco;
-	}
 
-	public void add(Lugar lugar) {
+    public void add(Lugar lugar) {
         this.lugares.add(lugar);
     }
 
@@ -93,4 +86,12 @@ public class Sala {
         Optional<Lugar> optional = this.lugares.stream().filter((x) -> fileira.equals(x.getFileira()) && posicao.equals(x.getPosicao())).findFirst();
         return optional.get().getId();
     }
+
+	public BigDecimal getPreco() {
+		return preco;
+	}
+
+	public void setPreco(BigDecimal preco) {
+		this.preco = preco;
+	}
 }

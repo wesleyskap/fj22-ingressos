@@ -15,7 +15,7 @@
                 <th>Horário</th>
                 <th>Filme</th>
                 <th>Duração</th>
-                 <th>Preço</th>
+                <th>Preço</th>
 
                 <th colspan="2" class="text-center">Ações</th>
             </tr>
